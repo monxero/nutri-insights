@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutri-Insights — Diagrama entidad-relación (Documento 08)</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #2c2c2a;
+    --text-secondary: #5f5e5a;
+    --border: #d3d1c7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --text: #e8e6dd;
+      --text-secondary: #b4b2a9;
+      --border: #444441;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 24px 64px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    max-width: 900px;
+    margin: 0 auto 24px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  p.meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  #erd {
+    max-width: 1100px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+  #erd svg { width: 100%; height: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Nutri-Insights — Diagrama entidad-relación</h1>
+  <p class="meta">Corresponde al Documento 08 (Modelo de datos) · Generado 19-07-2026 · Incluye las tablas propias del dominio y las que ASP.NET Identity crea automáticamente (ASPNET_*) — varias de estas últimas quedan vacías en el MVP, al no usar roles ni proveedores externos de login (ver ADR-005).</p>
+</header>
+
+<div id="erd"></div>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#e8e6dd' : '#2c2c2a',
+    primaryColor: dark ? '#3c3489' : '#EEEDFE',
+    primaryTextColor: dark ? '#e8e6dd' : '#26215C',
+    primaryBorderColor: dark ? '#7f77dd' : '#534AB7',
+  },
+});
+
+const src = `erDiagram
+  APPLICATION_USER ||--o{ REGISTRO : tiene
+  APPLICATION_USER ||--o{ OBJETIVO : tiene
+  APPLICATION_USER ||--o{ ALIMENTO : posee
+  REGISTRO ||--o{ ITEM_DE_REGISTRO : contiene
+  ITEM_DE_REGISTRO }o--|| ALIMENTO : referencia
+  ITEM_DE_REGISTRO }o--o| UNIDAD_MEDIDA : usa
+  ALIMENTO }o--|| CATEGORIA_ALIMENTO : pertenece
+  CATEGORIA_ALIMENTO ||--o{ CALIFICADOR_CANTIDAD : define
+  ALIMENTO ||--o{ ALIMENTO_UNIDAD_EQUIVALENCIA : tiene
+  UNIDAD_MEDIDA ||--o{ ALIMENTO_UNIDAD_EQUIVALENCIA : usada_en
+  APPLICATION_USER ||--o{ ASPNET_USER_CLAIMS : tiene
+  APPLICATION_USER ||--o{ ASPNET_USER_LOGINS : tiene
+  APPLICATION_USER ||--o{ ASPNET_USER_TOKENS : tiene
+  APPLICATION_USER }o--o{ ASPNET_ROLES : ASPNET_USER_ROLES
+  ASPNET_ROLES ||--o{ ASPNET_ROLE_CLAIMS : tiene
+
+  APPLICATION_USER {
+    guid Id PK
+    decimal Peso
+    decimal Estatura
+    string Sexo
+    date FechaNacimiento
+    string NivelActividad
+  }
+  REGISTRO {
+    guid Id PK
+    guid UsuarioId FK
+    date Fecha
+    string Comida
+  }
+  ITEM_DE_REGISTRO {
+    guid Id PK
+    guid RegistroId FK
+    guid AlimentoId FK
+    decimal Cantidad
+    guid UnidadMedidaId FK
+    decimal FraccionAplicada
+    string NivelEstimacion
+    decimal CaloriasSnapshot
+  }
+  ALIMENTO {
+    guid Id PK
+    string Nombre
+    guid CategoriaAlimentoId FK
+    string Origen
+    guid UsuarioPropietarioId FK
+    decimal CaloriasPor100g
+    string NivelConfianza
+  }
+  OBJETIVO {
+    guid Id PK
+    guid UsuarioId FK
+    string Nutriente
+    string Tipo
+    decimal Valor
+  }
+  CATEGORIA_ALIMENTO {
+    guid Id PK
+    string Nombre
+    decimal PorcionReferenciaGramos
+  }
+  UNIDAD_MEDIDA {
+    guid Id PK
+    string Nombre
+  }
+  ALIMENTO_UNIDAD_EQUIVALENCIA {
+    guid Id PK
+    guid AlimentoId FK
+    guid UnidadMedidaId FK
+    decimal EquivalenteEnGramos
+  }
+  CALIFICADOR_CANTIDAD {
+    guid Id PK
+    guid CategoriaAlimentoId FK
+    string Calificador
+    decimal MinGramos
+    decimal MaxGramos
+  }
+  ASPNET_ROLES {
+    guid Id PK
+    string Nombre
+  }
+  ASPNET_USER_CLAIMS {
+    int Id PK
+    guid UserId FK
+  }
+  ASPNET_USER_LOGINS {
+    string LoginProvider PK
+    guid UserId FK
+  }
+  ASPNET_USER_TOKENS {
+    guid UserId PK
+    string LoginProvider PK
+    string Name PK
+  }
+  ASPNET_ROLE_CLAIMS {
+    int Id PK
+    guid RoleId FK
+  }`;
+
+const { svg } = await mermaid.render('erd-svg', src);
+document.getElementById('erd').innerHTML = svg;
+</script>
+
+</body>
+</html>

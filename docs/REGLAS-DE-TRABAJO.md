@@ -30,3 +30,5 @@ Este documento define cómo trabajamos juntos (usuario y asistente) en este proy
 - Toda decisión relevante se documenta antes de implementar.
 - Los documentos se escriben pensando en que los va a leer alguien más, no solo el propio equipo — esto obliga a justificar, no solo enunciar.
 - Se mantiene `CONTEXTO.md` como resumen vivo del estado del proyecto, para que cualquier conversación nueva pueda retomarlo sin perder continuidad.
+- **El documento 06 (Arquitectura) es, para el usuario, el más importante para releer y estudiar — es donde tiene sus mayores falencias reales: nombres técnicos, cómo funcionan las tecnologías por dentro.** Por eso cada bloque de ese documento debe mantener la estructura completa "Por qué" (qué RF/RNF motiva la decisión) + "Cómo funciona" (el mecanismo técnico explicado con profundidad pedagógica, no solo enunciado) — ya es el patrón que se ha venido siguiendo, y debe mantenerse sin recortar en los bloques que faltan.
+- `CONTEXTO.md` sigue siendo el registro vivo de decisiones y razonamiento del proyecto en general — sus entradas pueden quedar breves salvo que una lección puntual amerite más detalle por su propio peso.
