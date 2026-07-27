@@ -134,6 +134,10 @@ Orden de documentos (propuesto por otro LLM, ajustado en conversación):
 - **Recetas con rendimiento de varias porciones (ej. "cazuela para 6 personas"):** si la descripción de un plato nuevo implica un rendimiento total en vez de una porción individual, el sistema pregunta qué cantidad consumió el usuario respecto al total, antes de guardar — evita atribuir toda la receta a un solo registro. Mecanismo distinto pero relacionado con la fracción de un plato ya servido (RF-16): aquí la fracción aplica sobre el rendimiento total de la receta, no sobre una porción ya preparada.
 - **Variantes de un mismo plato guardado (RF-37, RF-38):** si una nueva descripción de un plato con el mismo nombre difiere significativamente de lo guardado (ej. cambio de fuente de proteína), el sistema pregunta si es una variante distinta y sugiere un nombre diferenciado — el usuario decide, incluyendo la opción de no diferenciar (libre albedrío, se respeta sin insistir). También se puede crear un plato nuevo por referencia a uno existente ("como la de ave, pero con vacuno"), copiando su composición y recalculando solo lo que cambia.
 - **Requerimiento de tono: resuelto, ver documento 05, RNF-18.**
+- **Etapa 0 — decisión técnica: .NET 10 en vez de .NET 8, verificada contra soporte vigente.** .NET 8 y 9 llegan a fin de soporte el 10 de noviembre de 2026 (~3 meses desde el inicio de esta etapa); .NET 10 LTS tiene soporte hasta noviembre de 2028. Los SDKs conviven side-by-side sin conflicto; el proyecto anterior (Kino-Analizer) en net8.0 sigue funcionando sin cambios.
+- **Etapa 0 — `dotnet new sln` genera `.slnx` por defecto desde .NET 10, no `.sln`.** Cambio de comportamiento del SDK (breaking change documentado oficialmente), no una elección del proyecto. Formato XML, más legible, mismo propósito. Soportado por VS Code, Visual Studio 2022 17.13+ y Rider 2024.3+.
+- **Etapa 0 — ADR-006 revisado y confirmado como vigente, con técnica de implementación distinta a la documentada originalmente.** El ADR pedía Razor Pages para las pantallas de Identity. La plantilla actual de Blazor Web App (`dotnet new blazor -au Individual`) resuelve el mismo problema con componentes Blazor en SSR estático (sin `@rendermode`, dentro de `Components/Account/Pages`) — confirmado como patrón oficial en la documentación de Microsoft (los componentes de Identity deben renderizarse en el servidor con SSR estático porque establecen cookies de Identity). El objetivo del ADR se mantiene cumplido; no se reescribe la decisión, solo se actualiza la técnica de implementación esperada.
+- **Lección — verificar con `dotnet build` antes de "corregir" algo basado solo en lo que muestra el editor.** Durante la instalación de MudBlazor, un error de namespace mostrado por el editor (sin haber corrido el compilador todavía) llevó a una "corrección" no verificada (cambiar `using MudBlazor.Services;` por `using MudBlazor;`), que introdujo un error de compilación real (`AddMudServices` no encontrado) que tomó varios pasos de diagnóstico revertir. La documentación oficial de instalación siempre había indicado `using MudBlazor.Services;` para el método de registro de servicios. Mismo patrón que la lección ya registrada sobre MAUI: una corrección que suena plausible no reemplaza la verificación contra una fuente real.
 
 ## 4. Reglas de trabajo activas
 
@@ -145,7 +149,7 @@ Los doce documentos (00-11) están completos. La construcción se divide en etap
 
 | Etapa | Contenido | Estado |
 |---|---|---|
-| 0 | Esqueleto del proyecto: solución .NET, estructura de carpetas, Git con primer commit, dependencias base (Blazor Web App, EF Core, Npgsql, MudBlazor) instaladas sin funcionalidad todavía | Pendiente |
+| 0 | Esqueleto del proyecto: solución .NET (.slnx), estructura de carpetas, Git con SSH configurado, cuatro proyectos creados y referenciados (Domain, Infrastructure, Web, Tests), MudBlazor instalado y activado, Identity con Guid (ADR-005). Primera prueba de conexión Tests-Domain pasando | Casi completa — ver pendientes en sección 3 |
 | 1 | Persistencia y modelo de datos: DbContext, entidades del documento 08 como clases C#, primera migración, conexión real a PostgreSQL. Primera prueba: que el DbContext se construye correctamente | Pendiente |
 | 2 | Autenticación: Identity configurado con Guid, Razor Pages para login/registro/logout, política de contraseña. Prueba de un servicio relacionado | Pendiente |
 | 3 | Datos nutricionales base: tabla curada mínima + integración con la API de OpenFoodFacts. Prueba con un doble/mock de la fuente externa | Pendiente |
@@ -158,4 +162,11 @@ Los doce documentos (00-11) están completos. La construcción se divide en etap
 
 ## 6. Próximo paso
 
-Crear el proyecto de Claude, subir los documentos y este archivo a la base de conocimiento, y comenzar la Etapa 0 en una conversación nueva dentro del proyecto.
+Etapa 0 casi completa. Pendientes técnicos antes de darla por cerrada (a resolver al inicio de la Etapa 1, ya que están ligados a persistencia):
+
+- Migrar de SQLite a PostgreSQL (ADR-004) — evaluar si el `DbContext` de Identity se mueve de `Web` a `Infrastructure`, según el diagrama de la Etapa 0.
+- Borrar `src/NutriInsights.Web/Data/app.db` al hacer esa migración.
+- Regenerar las migraciones de Identity desde cero (las actuales quedaron obsoletas tras configurar `Guid` como tipo de clave).
+- Agregar `<MudThemeProvider/>` (y opcionalmente `<MudDialogProvider/>`, `<MudSnackbarProvider/>`) en `MainLayout.razor` — MudBlazor está instalado y activado, pero no completamente configurado.
+
+Próxima conversación: Etapa 1 (persistencia y modelo de datos), en una conversación nueva dentro del proyecto.
