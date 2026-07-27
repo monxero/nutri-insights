@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/NutriInsights.Domain/NutriInsights.Domain.csproj" />
+    <Project Path="src/NutriInsights.Infrastructure/NutriInsights.Infrastructure.csproj" />
   </Folder>
 </Solution>
