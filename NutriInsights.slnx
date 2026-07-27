@@ -4,4 +4,7 @@
     <Project Path="src/NutriInsights.Infrastructure/NutriInsights.Infrastructure.csproj" />
     <Project Path="src/NutriInsights.Web/NutriInsights.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NutriInsights.Tests/NutriInsights.Tests.csproj" />
+  </Folder>
 </Solution>
