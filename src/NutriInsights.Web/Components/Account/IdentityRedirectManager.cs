@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
-using NutriInsights.Web.Data;
+using NutriInsights.Infrastructure.Persistence;
 
 namespace NutriInsights.Web.Components.Account;
 

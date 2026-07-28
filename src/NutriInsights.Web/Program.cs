@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NutriInsights.Web.Components;
 using NutriInsights.Web.Components.Account;
-using NutriInsights.Web.Data;
+using NutriInsights.Infrastructure.Persistence;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

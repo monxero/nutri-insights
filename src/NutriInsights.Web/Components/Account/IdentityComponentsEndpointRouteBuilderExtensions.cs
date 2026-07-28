@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using NutriInsights.Web.Components.Account.Pages;
 using NutriInsights.Web.Components.Account.Pages.Manage;
-using NutriInsights.Web.Data;
+using NutriInsights.Infrastructure.Persistence;
 
 namespace Microsoft.AspNetCore.Routing;
 

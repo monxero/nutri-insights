@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using NutriInsights.Web.Data;
+using NutriInsights.Infrastructure.Persistence;
 
 namespace NutriInsights.Web.Components.Account;
 
