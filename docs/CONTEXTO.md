@@ -138,6 +138,10 @@ Orden de documentos (propuesto por otro LLM, ajustado en conversación):
 - **Etapa 0 — `dotnet new sln` genera `.slnx` por defecto desde .NET 10, no `.sln`.** Cambio de comportamiento del SDK (breaking change documentado oficialmente), no una elección del proyecto. Formato XML, más legible, mismo propósito. Soportado por VS Code, Visual Studio 2022 17.13+ y Rider 2024.3+.
 - **Etapa 0 — ADR-006 revisado y confirmado como vigente, con técnica de implementación distinta a la documentada originalmente.** El ADR pedía Razor Pages para las pantallas de Identity. La plantilla actual de Blazor Web App (`dotnet new blazor -au Individual`) resuelve el mismo problema con componentes Blazor en SSR estático (sin `@rendermode`, dentro de `Components/Account/Pages`) — confirmado como patrón oficial en la documentación de Microsoft (los componentes de Identity deben renderizarse en el servidor con SSR estático porque establecen cookies de Identity). El objetivo del ADR se mantiene cumplido; no se reescribe la decisión, solo se actualiza la técnica de implementación esperada.
 - **Lección — verificar con `dotnet build` antes de "corregir" algo basado solo en lo que muestra el editor.** Durante la instalación de MudBlazor, un error de namespace mostrado por el editor (sin haber corrido el compilador todavía) llevó a una "corrección" no verificada (cambiar `using MudBlazor.Services;` por `using MudBlazor;`), que introdujo un error de compilación real (`AddMudServices` no encontrado) que tomó varios pasos de diagnóstico revertir. La documentación oficial de instalación siempre había indicado `using MudBlazor.Services;` para el método de registro de servicios. Mismo patrón que la lección ya registrada sobre MAUI: una corrección que suena plausible no reemplaza la verificación contra una fuente real.
+- **Etapa 0 — cierre: persistencia movida de Web a Infrastructure.** `ApplicationDbContext` y `ApplicationUser` viven en `Infrastructure/Persistence/`, no en `Web/Data/` — separación entre la capa de presentación (Web) y la implementación técnica de persistencia (Infrastructure). No forma parte de un ADR numerado: es una convención de organización en capas, no un requisito técnico obligatorio; documentado aquí porque RNF-12 pide registrar decisiones de arquitectura relevantes.
+- **Etapa 0 — migración SQLite → PostgreSQL completada (ADR-004).** Base `nutriinsights` creada localmente con un rol dedicado (`nutriinsights_app`, no el superusuario `postgres`), cadena de conexión guardada en User Secrets (nunca en `appsettings.json`, que se sube a Git). Primera migración (`InitialCreate`) generada y aplicada, verificada con `psql` — 8 tablas de Identity + `__EFMigrationsHistory` existen en la base real.
+- **Lección — `dotnet-ef` como herramienta global rompe entre proyectos con versiones EF Core distintas.** Kino-Analizer (EF Core 8) y Nutri-Insights (EF Core 10) conviven en la misma máquina. Instalar `dotnet-ef` como herramienta *local* (`.config/dotnet-tools.json`, versionada en el repo) evita el conflicto por completo — cada proyecto fija su propia versión, sin depender de qué esté instalado globalmente. Mejor práctica general una vez que hay más de un proyecto .NET en la máquina, no específica de este caso.
+- **Lección — MudBlazor requiere 4 providers en `MainLayout`, no 3.** Además de `MudThemeProvider`, `MudDialogProvider` y `MudSnackbarProvider` (ya previstos), `MudPopoverProvider` es necesario para componentes con menús desplegables (`MudSelect`, `MudMenu`) — sin él, fallan en tiempo de ejecución con un error poco claro. Confirmado contra documentación oficial de MudBlazor, no estaba en la nota original de este pendiente.
 
 ## 4. Reglas de trabajo activas
 
@@ -149,7 +153,7 @@ Los doce documentos (00-11) están completos. La construcción se divide en etap
 
 | Etapa | Contenido | Estado |
 |---|---|---|
-| 0 | Esqueleto del proyecto: solución .NET (.slnx), estructura de carpetas, Git con SSH configurado, cuatro proyectos creados y referenciados (Domain, Infrastructure, Web, Tests), MudBlazor instalado y activado, Identity con Guid (ADR-005). Primera prueba de conexión Tests-Domain pasando | Casi completa — ver pendientes en sección 3 |
+| 0 | Esqueleto del proyecto: solución .NET (.slnx), estructura de carpetas, Git con SSH configurado, cuatro proyectos creados y referenciados (Domain, Infrastructure, Web, Tests), MudBlazor instalado y activado con sus 4 providers, Identity con Guid (ADR-005) y PostgreSQL (ADR-004). Primera prueba de conexión Tests-Domain pasando | Completa |
 | 1 | Persistencia y modelo de datos: DbContext, entidades del documento 08 como clases C#, primera migración, conexión real a PostgreSQL. Primera prueba: que el DbContext se construye correctamente | Pendiente |
 | 2 | Autenticación: Identity configurado con Guid, Razor Pages para login/registro/logout, política de contraseña. Prueba de un servicio relacionado | Pendiente |
 | 3 | Datos nutricionales base: tabla curada mínima + integración con la API de OpenFoodFacts. Prueba con un doble/mock de la fuente externa | Pendiente |
@@ -162,11 +166,6 @@ Los doce documentos (00-11) están completos. La construcción se divide en etap
 
 ## 6. Próximo paso
 
-Etapa 0 casi completa. Pendientes técnicos antes de darla por cerrada (a resolver al inicio de la Etapa 1, ya que están ligados a persistencia):
+Etapa 0 completa. Los cuatro pendientes técnicos quedaron resueltos: PostgreSQL en producción real (ADR-004), persistencia reorganizada en Infrastructure, migración inicial de Identity generada y aplicada, MudBlazor completamente configurado.
 
-- Migrar de SQLite a PostgreSQL (ADR-004) — evaluar si el `DbContext` de Identity se mueve de `Web` a `Infrastructure`, según el diagrama de la Etapa 0.
-- Borrar `src/NutriInsights.Web/Data/app.db` al hacer esa migración.
-- Regenerar las migraciones de Identity desde cero (las actuales quedaron obsoletas tras configurar `Guid` como tipo de clave).
-- Agregar `<MudThemeProvider/>` (y opcionalmente `<MudDialogProvider/>`, `<MudSnackbarProvider/>`) en `MainLayout.razor` — MudBlazor está instalado y activado, pero no completamente configurado.
-
-Próxima conversación: Etapa 1 (persistencia y modelo de datos), en una conversación nueva dentro del proyecto.
+Próxima conversación: Etapa 1 (persistencia y modelo de datos) — DbContext ya existe y ya apunta a PostgreSQL; falta modelar las entidades del documento 08 como clases C#, generar su migración, y la primera prueba (que el DbContext se construye correctamente).
