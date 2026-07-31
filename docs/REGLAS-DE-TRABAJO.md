@@ -32,3 +32,9 @@ Este documento define cómo trabajamos juntos (usuario y asistente) en este proy
 - Se mantiene `CONTEXTO.md` como resumen vivo del estado del proyecto, para que cualquier conversación nueva pueda retomarlo sin perder continuidad.
 - **El documento 06 (Arquitectura) es, para el usuario, el más importante para releer y estudiar — es donde tiene sus mayores falencias reales: nombres técnicos, cómo funcionan las tecnologías por dentro.** Por eso cada bloque de ese documento debe mantener la estructura completa "Por qué" (qué RF/RNF motiva la decisión) + "Cómo funciona" (el mecanismo técnico explicado con profundidad pedagógica, no solo enunciado) — ya es el patrón que se ha venido siguiendo, y debe mantenerse sin recortar en los bloques que faltan.
 - `CONTEXTO.md` sigue siendo el registro vivo de decisiones y razonamiento del proyecto en general — sus entradas pueden quedar breves salvo que una lección puntual amerite más detalle por su propio peso.
+
+## 6. Entorno de trabajo
+
+- El asistente no tiene acceso de escritura al repositorio real del usuario — solo lectura de los documentos 00 a 11, `CONTEXTO.md` y `REGLAS-DE-TRABAJO.md` (copias del proyecto de Claude). El código real vive en la máquina del usuario.
+- Por esto, el flujo de trabajo con código es: el asistente propone el cambio (fragmento pequeño y explicado), el usuario lo aplica en su editor, corre `dotnet build` (u otro comando pedido) y pega el resultado real de la terminal — nunca se asume que un cambio propuesto ya quedó aplicado o que compiló sin esa confirmación.
+- No hace falta que el asistente repita esta aclaración en cada mensaje — se asume conocida a partir de esta regla.
