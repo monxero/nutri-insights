@@ -10,6 +10,7 @@ using AlimentoUnidadEquivalenciaEntity = NutriInsights.Domain.AlimentoUnidadEqui
 using RegistroEntity = NutriInsights.Domain.Registro.Registro;
 using ItemDeRegistroEntity = NutriInsights.Domain.ItemDeRegistro.ItemDeRegistro;
 using ObjetivoEntity = NutriInsights.Domain.Objetivo.Objetivo;
+using NutriInsights.Domain.CategoriaAlimento;
 
 namespace NutriInsights.Infrastructure.Persistence;
 
@@ -45,5 +46,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany()
             .HasForeignKey(a => a.UsuarioPropietarioId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CategoriaAlimentoEntity>().HasData(
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.ProteinaAnimalId, Nombre = "Proteína animal", PorcionReferenciaGramos = 120 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.ProteinaVegetalId, Nombre = "Proteína vegetal / legumbres", PorcionReferenciaGramos = 80 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.VerdurasId, Nombre = "Verduras", PorcionReferenciaGramos = 100 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.FrutasId, Nombre = "Frutas", PorcionReferenciaGramos = 150 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.CarbohidratosId, Nombre = "Carbohidratos / cereales", PorcionReferenciaGramos = 150 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.LacteosId, Nombre = "Lácteos", PorcionReferenciaGramos = 200 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.GrasasYFrutosSecosId, Nombre = "Grasas y frutos secos", PorcionReferenciaGramos = 30 },
+            new CategoriaAlimentoEntity { Id = CategoriasAlimentoSemilla.OtrosProcesadosId, Nombre = "Otros / procesados", PorcionReferenciaGramos = 50 }
+        );
     }
 }
