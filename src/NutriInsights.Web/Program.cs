@@ -5,6 +5,8 @@ using NutriInsights.Web.Components;
 using NutriInsights.Web.Components.Account;
 using NutriInsights.Infrastructure.Persistence;
 using MudBlazor.Services;
+using NutriInsights.Domain.BusquedaAlimentos;
+using NutriInsights.Infrastructure.BusquedaAlimentos.OpenFoodFacts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddHttpClient<IBuscadorAlimentosExternos, BuscadorAlimentosOpenFoodFacts>(cliente =>
+{
+    cliente.BaseAddress = new Uri("https://search.openfoodfacts.org/");
+    cliente.DefaultRequestHeaders.UserAgent.ParseAdd("NutriInsights/0.1 (proyecto de portafolio)");
+});
 
 var app = builder.Build();
 
