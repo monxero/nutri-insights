@@ -147,7 +147,11 @@ Los cuatro servicios que usa el Backend (Persistencia, Autenticación, IA, Datos
 
 **Cómo funciona:**
 - Un producto envasado con marca reconocible se resuelve consultando OpenFoodFacts; un alimento genérico o crudo se resuelve consultando la tabla curada propia. Ambos caminos alimentan al mismo motor de cálculo.
-- OpenFoodFacts es una API REST pública (`world.openfoodfacts.org/api/v2`), sin necesidad de API key para lectura — se identifica la aplicación con un encabezado `User-Agent` propio. La respuesta trae los valores nutricionales normalizados por 100g, listos para escalar según la cantidad registrada.
+OpenFoodFacts se consulta de dos formas distintas, según el caso:
+- **Búsqueda por nombre** (caso principal, cuando el usuario describe un producto en lenguaje natural): contra Search-a-licious (`search.openfoodfacts.org`), un servicio separado y en beta, mediante `POST /search` con parámetro `q` de texto libre. La API v2 no soporta búsqueda de texto libre por nombre, solo filtros estructurados (categoría, marca, código) — verificado directamente contra la documentación y el comportamiento real de la API en la Etapa 3.
+- **Re-consulta por código conocido** (cuando ya se guardó un `CodigoExterno` de una consulta anterior): contra la API v2 (`world.openfoodfacts.org/api/v2/product/{código}`), sin necesidad de API key para lectura.
+
+Ambas formas se identifican con un encabezado `User-Agent` propio, requisito documentado por OpenFoodFacts. La respuesta trae los valores nutricionales normalizados por 100g, listos para escalar según la cantidad registrada.
 - **Son 2 fuentes en producción, no 3.** OpenFoodFacts se consulta en tiempo real, como una dependencia externa viva (con todo lo que eso implica: RNF-03 a RNF-05, manejo de fallas). La tabla propia, en cambio, no depende de ninguna consulta externa en producción — tiene **2 orígenes de contenido**, ambos resueltos antes de que la app llegue a un usuario final:
   1. **Semilla importada de USDA FoodData Central** (categoría "Foundation Foods", ~8.000 alimentos genéricos y crudos medidos en laboratorio, dominio público bajo licencia CC0) — importada, traducida y curada una sola vez (con actualizaciones periódicas, ya que USDA revisa esta categoría un par de veces al año), no consultada en vivo.
   2. **Curación regional propia**, para alimentos y platos específicamente chilenos que no tienen buen equivalente en la semilla de USDA — se completa manualmente o mediante el flujo conversacional de agregar un plato nuevo (RF-17).

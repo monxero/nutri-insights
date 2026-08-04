@@ -100,12 +100,13 @@ Formato: Michael Nygard (Contexto / Alternativas evaluadas / Decisión / Consecu
 **Alternativas evaluadas:**
 - Solo OpenFoodFacts — cobertura débil en alimentos genéricos por diseño (está pensada para productos con código de barras).
 - Construir una tabla propia desde cero — trabajo de investigación evitable.
-- Tabla propia con semilla de USDA FoodData Central (categoría Foundation Foods, ~8.000 alimentos, dominio público, verificado) + curación regional para alimentos específicamente chilenos.
+- Tabla propia con semilla de USDA FoodData Central (categoría Foundation Foods, dominio público, verificado) + curación regional para alimentos específicamente chilenos.
 
 **Decisión:** OpenFoodFacts consultado en vivo + tabla propia curada (semilla USDA importada una sola vez + curación regional). Dos fuentes en producción, no tres — USDA no es una dependencia en tiempo real.
 
 **Consecuencias:** menor riesgo operativo (una dependencia externa en vivo, no dos); la curación regional (traducción, adaptación a alimentos chilenos) es trabajo real pendiente, no automático.
 
+**Corrección (Etapa 3):** el número original de "~8.000 alimentos" citado en este ADR y en el documento 06 correspondía a SR Legacy (7.793 ítems), un dataset de USDA distinto y ya congelado desde 2018 — no es el que se usa en este proyecto. La categoría real usada, Foundation Foods, es mucho más pequeña y crece con cada release semestral: 287 alimentos en la versión de abril 2024, 395 en la versión de abril 2026 (verificado contra el JSON descargado). La decisión de usar Foundation Foods sobre SR Legacy se mantiene sin cambios (más reciente, activamente mantenida, con metadatos más ricos) — solo el número estaba mal.
 ---
 
 ## ADR-008: `Alimento` como una sola tabla (identidad + información nutricional juntas)

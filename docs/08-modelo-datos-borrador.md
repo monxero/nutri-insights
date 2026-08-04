@@ -57,6 +57,21 @@ Entidad de dominio: `Categoría de alimento` (documento 07, sección 6).
 
 **Justificación:** patrón de variedad semanal, diccionario de calificadores (documento 04, sección C).
 
+**Semilla inicial (Etapa 3), 8 categorías — valores de `PorcionReferenciaGramos` de partida, no verificados contra fuente científica, a afinar con uso real (mismo tratamiento que los calificadores cualitativos de `CONTEXTO.md`):**
+
+| Categoría | PorcionReferenciaGramos |
+|---|---|
+| Proteína animal | 120 |
+| Proteína vegetal / legumbres | 80 |
+| Verduras | 100 |
+| Frutas | 150 |
+| Carbohidratos / cereales | 150 |
+| Lácteos | 200 |
+| Grasas y frutos secos | 30 |
+| Otros / procesados | 50 |
+
+Persistida vía `HasData` en la migración `AgregarSemillaCategoriasAlimento`, con `Guid` fijos referenciables desde código en `NutriInsights.Domain.CategoriaAlimento.CategoriasAlimentoSemilla`.
+
 ## 3. UnidadMedida
 
 Tabla de referencia, no enum — misma razón que `CategoriaAlimento`: el conjunto de unidades crece con el tiempo (hoy gramos/mililitros/unidad/cucharada/taza/porción, mañana probablemente lata, rebanada, vaso, scoop). Modelarla como tabla permite agregar una unidad nueva insertando una fila, sin recompilar ni desplegar la aplicación.
