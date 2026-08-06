@@ -31,3 +31,38 @@ var mapeoCategoriasUsda = new Dictionary<string, Guid>
     ["Beverages"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
 };
 
+var procesados = 0;
+var nulos = 0;
+var sinCategoria = 0;
+var categoriaNoMapeada = 0;
+
+foreach (var alimento in archivo.FoundationFoods)
+{
+    if (alimento is null)
+    {
+        nulos++;
+        continue;
+    }
+
+    var categoriaTexto = alimento.FoodCategory?.Description;
+    if (categoriaTexto is null)
+    {
+        sinCategoria++;
+        continue;
+    }
+
+    if (!mapeoCategoriasUsda.TryGetValue(categoriaTexto, out var categoriaId))
+    {
+        categoriaNoMapeada++;
+        continue;
+    }
+
+    procesados++;
+}
+
+Console.WriteLine($"Total en el JSON: {archivo.FoundationFoods.Count}");
+Console.WriteLine($"Nulos: {nulos}");
+Console.WriteLine($"Sin categoría: {sinCategoria}");
+Console.WriteLine($"Categoría no mapeada (excluidos): {categoriaNoMapeada}");
+Console.WriteLine($"Procesados (listos para guardar): {procesados}");
+
