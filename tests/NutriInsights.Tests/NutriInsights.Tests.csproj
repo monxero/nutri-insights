@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\NutriInsights.Domain\NutriInsights.Domain.csproj" />
     <ProjectReference Include="..\..\src\NutriInsights.Infrastructure\NutriInsights.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\NutriInsights.Importador\NutriInsights.Importador.csproj" />
   </ItemGroup>
 
 </Project>
