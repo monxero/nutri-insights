@@ -1,28 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NutriInsights.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using NutriInsights.Importador;
 
+var opcionesJson = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+var textoJson = File.ReadAllText("../../tmp-importacion/FoodData_Central_foundation_food_json_2026-04-30.json");
+var archivo = JsonSerializer.Deserialize<ArchivoUsda>(textoJson, opcionesJson)!;
 
-var configuracion = new ConfigurationBuilder()
-    .AddUserSecrets<Program>()
-    .Build();
+var sandia = archivo.FoundationFoods.First(a => a is not null && a.FdcId == 2747676)!;
 
-var cadenaConexion = configuracion.GetConnectionString("DefaultConnection");
-
-if (string.IsNullOrEmpty(cadenaConexion))
+Console.WriteLine($"Nombre: {sandia.Description}");
+Console.WriteLine($"Categoría: {sandia.FoodCategory?.Description}");
+foreach (var nutriente in sandia.FoodNutrients)
 {
-    Console.WriteLine("No se encontró la cadena de conexión.");
+    Console.WriteLine($"  {nutriente.Nutrient.Number} - {nutriente.Nutrient.Name}: {nutriente.Amount} {nutriente.Nutrient.UnitName}");
 }
-else
-{
-    Console.WriteLine($"Cadena de conexión encontrada, largo: {cadenaConexion.Length} caracteres.");
-}
-
-var opciones = new DbContextOptionsBuilder<ApplicationDbContext>()
-    .UseNpgsql(cadenaConexion)
-    .Options;
-
-using var db = new ApplicationDbContext(opciones);
-
-var cantidadCategorias = db.CategoriasAlimento.Count();
-Console.WriteLine($"Categorías encontradas en la base: {cantidadCategorias}");
