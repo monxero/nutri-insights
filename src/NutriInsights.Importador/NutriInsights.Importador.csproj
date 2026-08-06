@@ -5,11 +5,16 @@
     <ProjectReference Include="..\NutriInsights.Infrastructure\NutriInsights.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.10" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>1a3ad367-5deb-4de6-bd85-c0b2a5a3caef</UserSecretsId>
   </PropertyGroup>
 
 </Project>
