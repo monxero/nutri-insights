@@ -3,28 +3,31 @@ using NutriInsights.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using NutriInsights.Importador;
+using NutriInsights.Domain.CategoriaAlimento;
 
 var opcionesJson = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 var textoJson = File.ReadAllText("../../tmp-importacion/FoodData_Central_foundation_food_json_2026-04-30.json");
 var archivo = JsonSerializer.Deserialize<ArchivoUsda>(textoJson, opcionesJson)!;
 
-var sandia = archivo.FoundationFoods.First(a => a is not null && a.FdcId == 2747676)!;
-
-Console.WriteLine($"Nombre: {sandia.Description}");
-Console.WriteLine($"Categoría: {sandia.FoodCategory?.Description}");
-var macros = ExtraerMacros(sandia);
-Console.WriteLine($"Calorías: {macros.Calorias}, Proteína: {macros.Proteina}, Carbohidratos: {macros.Carbohidratos}, Grasa: {macros.Grasa}, Fibra: {macros.Fibra}");
-
-static (decimal? Calorias, decimal? Proteina, decimal? Carbohidratos, decimal? Grasa, decimal? Fibra) ExtraerMacros(AlimentoUsdaDto alimento)
+var mapeoCategoriasUsda = new Dictionary<string, Guid>
 {
-    decimal? BuscarPorNumero(params string[] numeros) =>
-        alimento.FoodNutrients.FirstOrDefault(n => numeros.Contains(n.Nutrient.Number))?.Amount;
+    ["Vegetables and Vegetable Products"] = CategoriasAlimentoSemilla.VerdurasId,
+    ["Fruits and Fruit Juices"] = CategoriasAlimentoSemilla.FrutasId,
+    ["Dairy and Egg Products"] = CategoriasAlimentoSemilla.LacteosId,
+    ["Cereal Grains and Pasta"] = CategoriasAlimentoSemilla.CarbohidratosId,
+    ["Baked Products"] = CategoriasAlimentoSemilla.CarbohidratosId,
+    ["Legumes and Legume Products"] = CategoriasAlimentoSemilla.ProteinaVegetalId,
+    ["Finfish and Shellfish Products"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Beef Products"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Poultry Products"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Pork Products"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Sausages and Luncheon Meats"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Lamb, Veal, and Game Products"] = CategoriasAlimentoSemilla.ProteinaAnimalId,
+    ["Nut and Seed Products"] = CategoriasAlimentoSemilla.GrasasYFrutosSecosId,
+    ["Fats and Oils"] = CategoriasAlimentoSemilla.GrasasYFrutosSecosId,
+    ["Restaurant Foods"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
+    ["Soups, Sauces, and Gravies"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
+    ["Sweets"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
+    ["Beverages"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
+};
 
-    return (
-        Calorias: BuscarPorNumero("208", "957"),
-        Proteina: BuscarPorNumero("203"),
-        Carbohidratos: BuscarPorNumero("205"),
-        Grasa: BuscarPorNumero("204"),
-        Fibra: BuscarPorNumero("291")
-    );
-}
