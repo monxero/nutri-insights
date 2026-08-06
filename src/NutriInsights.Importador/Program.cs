@@ -18,7 +18,7 @@ var opcionesJson = new JsonSerializerOptions { PropertyNameCaseInsensitive = tru
 var textoJson = File.ReadAllText("../../tmp-importacion/FoodData_Central_foundation_food_json_2026-04-30.json");
 var archivo = JsonSerializer.Deserialize<ArchivoUsda>(textoJson, opcionesJson)!;
 
-var mapeoCategoriasUsda = new Dictionary<string, Guid>
+/*var mapeoCategoriasUsda = new Dictionary<string, Guid>
 {
     ["Vegetables and Vegetable Products"] = CategoriasAlimentoSemilla.VerdurasId,
     ["Fruits and Fruit Juices"] = CategoriasAlimentoSemilla.FrutasId,
@@ -39,7 +39,7 @@ var mapeoCategoriasUsda = new Dictionary<string, Guid>
     ["Sweets"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
     ["Beverages"] = CategoriasAlimentoSemilla.OtrosProcesadosId,
 };
-
+*/
 var procesados = 0;
 var nulos = 0;
 var sinCategoria = 0;
@@ -58,7 +58,8 @@ foreach (var alimentoUsda in archivo.FoundationFoods)
     var categoriaTexto = alimentoUsda.FoodCategory?.Description;
     if (categoriaTexto is null) { sinCategoria++; continue; }
 
-    if (!mapeoCategoriasUsda.TryGetValue(categoriaTexto, out var categoriaId))
+    //if (!mapeoCategoriasUsda.TryGetValue(categoriaTexto, out var categoriaId))
+    if (!MapeadorCategoriasUsda.TryMapear(categoriaTexto, out var categoriaId))
     {
         categoriaNoMapeada++;
         continue;
